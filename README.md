@@ -1,135 +1,485 @@
-# Non-Invasive Sleep Disorder Detection System
+# 💤 Non-Invasive Sleep Disorder Detection System
 
-A production-grade end-to-end system for detecting sleep disorders (Insomnia, DSPS, Normal) using smartphone behavioral metadata.
+An end-to-end machine learning application that analyzes **smartphone behavioral metadata** to identify patterns associated with **Normal Sleep, Insomnia, and Delayed Sleep Phase Syndrome (DSPS)**.
+
+The system uses smartphone activity patterns such as screen usage, late-night activity, app usage, charging behavior, and activity timing to generate a sleep-disorder risk prediction.
+
+> **Note:** This project is intended as a screening and sleep-awareness system for educational/research purposes. It is **not a medical diagnostic tool**.
+
+---
+
+## 📌 Overview
+
+Sleep disorders are increasingly associated with irregular sleep schedules, excessive nighttime smartphone usage, and changing digital habits.
+
+Traditional sleep assessment methods such as polysomnography (PSG) can require specialized equipment and clinical environments. This project explores a **non-invasive alternative** by analyzing behavioral metadata collected from smartphone activity.
+
+The application combines:
+
+* 📱 React Native mobile application
+* 🌐 Node.js + Express REST API
+* 🗄️ PostgreSQL database
+* 🧠 Python machine learning service
+* 🤖 Random Forest classification model
+* 🔐 JWT-based authentication
+
+The system processes user activity data, extracts behavioral features, sends them to the ML service, and displays the predicted sleep pattern through the mobile application.
+
+---
 
 ## 🏗️ System Architecture
 
+```text
+┌─────────────────────────────┐
+│     React Native / Expo     │
+│        Mobile App           │
+└──────────────┬──────────────┘
+               │ REST API
+               ▼
+┌─────────────────────────────┐
+│     Node.js + Express       │
+│        Backend API          │
+└───────┬─────────────┬───────┘
+        │             │
+        │             │ HTTP / JSON
+        ▼             ▼
+┌──────────────┐   ┌──────────────────────┐
+│ PostgreSQL   │   │ Python + Flask       │
+│   Database   │   │ ML Prediction Service│
+└──────────────┘   └──────────┬───────────┘
+                              │
+                              ▼
+                     ┌─────────────────┐
+                     │ Random Forest   │
+                     │ Classification  │
+                     └─────────────────┘
 ```
-Mobile App (React Native Expo) 
-    ↓ REST API
-Backend (Node.js + Express)
-    ↓ PostgreSQL
-    ↓ HTTP/JSON
-ML Service (Python + Flask)
-```
 
-## 📋 Prerequisites
+### Architecture Flow
 
-- **Node.js** 18+ and npm
-- **Python** 3.9+
-- **PostgreSQL** 14+
-- **Expo CLI** (for mobile app)
-- **Git**
+**Mobile App → REST API → Backend → PostgreSQL**
 
-## 🚀 Quick Start
+The backend retrieves recent activity data and communicates with the ML service:
 
-### 1. Database Setup
+**Backend → ML Service → Feature Extraction → Random Forest → Prediction**
+
+The prediction is returned to the backend, stored in PostgreSQL, and displayed in the mobile application.
+
+---
+
+## ✨ Key Features
+
+### 📱 Mobile Application
+
+* User registration and login
+* JWT-based authentication
+* Activity data upload
+* Sample activity data generation
+* Sleep-disorder prediction
+* Prediction history
+* Activity history
+* Risk visualization
+* Sleep timeline information
+* Personalized recommendations
+* User profile management
+
+### 🌐 Backend
+
+* RESTful API architecture
+* Authentication and authorization
+* Activity data management
+* Prediction management
+* Recommendation management
+* PostgreSQL integration
+* ML-service communication
+* Request validation and middleware
+
+### 🧠 Machine Learning
+
+* Behavioral feature extraction
+* 24 smartphone-usage features
+* Random Forest classification
+* Multi-class prediction:
+
+  * Normal
+  * Insomnia
+  * DSPS
+* Prediction probabilities
+* Model persistence using Python serialization
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer             | Technologies         |
+| ----------------- | -------------------- |
+| Mobile            | React Native, Expo   |
+| Frontend          | JavaScript           |
+| Backend           | Node.js, Express.js  |
+| Database          | PostgreSQL           |
+| Machine Learning  | Python, Scikit-learn |
+| ML API            | Flask                |
+| Authentication    | JWT                  |
+| API Communication | REST, HTTP/JSON      |
+| Version Control   | Git, GitHub          |
+
+---
+
+## 📊 Dataset
+
+The machine learning component was developed using a dataset containing approximately **142,021 smartphone behavioral records**.
+
+The dataset contains behavioral information that can be transformed into features related to:
+
+* Screen activity
+* Screen on/off events
+* Late-night smartphone usage
+* App-category usage
+* Session duration
+* Charging behavior
+* Activity timing
+* Sleep-related behavioral patterns
+
+The raw dataset is **not included in this repository**.
+
+Instead, the repository includes a synthetic-data generation workflow for development and testing.
+
+### Dataset Generation
+
+The project can generate a synthetic dataset using:
 
 ```bash
-# Create PostgreSQL database
-createdb sleep_disorder_db
+cd ml-service
+python src/synthetic_dataset.py
+```
 
-# Run schema
+The generated development dataset contains:
+
+* 300 simulated users
+* 14 days of activity per user
+* Sleep-pattern labels:
+
+  * Normal
+  * Insomnia
+  * DSPS
+
+This allows the complete ML pipeline to be tested without exposing the original dataset.
+
+---
+
+## 🧠 Machine Learning Model
+
+The project uses a **Random Forest Classifier** to classify sleep-related behavioral patterns.
+
+### Feature Engineering
+
+The model uses **24 behavioral features**, including:
+
+#### Temporal Features
+
+* Sleep start time
+* Sleep end time
+* Sleep duration
+* Sleep consistency
+* Activity distribution
+
+#### Late-Night Activity
+
+* Activity between 11 PM and 4 AM
+* Number of late-night events
+* Late-night screen usage
+
+#### Screen Usage
+
+* Screen session duration
+* Screen/unlock frequency
+* Number of active sessions
+
+#### Application Usage
+
+* Social media usage
+* Entertainment usage
+* Productivity usage
+* Other application categories
+
+#### Charging Behavior
+
+* Charging frequency
+* Charging timing
+* Nighttime charging behavior
+
+#### Circadian Indicators
+
+* Daily activity distribution
+* Night/day activity ratio
+* Irregular activity patterns
+
+---
+
+## 🔄 End-to-End Workflow
+
+```text
+1. User opens mobile application
+                ↓
+2. User authenticates
+                ↓
+3. Smartphone activity data is collected/uploaded
+                ↓
+4. Backend validates and stores activity data
+                ↓
+5. User requests a prediction
+                ↓
+6. Backend retrieves recent activity
+                ↓
+7. Backend sends data to ML service
+                ↓
+8. ML service extracts behavioral features
+                ↓
+9. Random Forest model generates prediction
+                ↓
+10. Prediction probabilities returned
+                ↓
+11. Backend stores prediction in PostgreSQL
+                ↓
+12. Recommendations are generated
+                ↓
+13. Mobile application displays the result
+```
+
+---
+
+## 📁 Project Structure
+
+```text
+CSE_C_14/
+│
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── middlewares/
+│   │   └── utils/
+│   │
+│   ├── database/
+│   │   └── schema.sql
+│   │
+│   └── package.json
+│
+├── ml-service/
+│   ├── src/
+│   │   ├── synthetic_dataset.py
+│   │   ├── train_model.py
+│   │   ├── inference.py
+│   │   └── features.py
+│   │
+│   ├── data/
+│   ├── models/
+│   └── requirements.txt
+│
+├── mobile-app/
+│   ├── src/
+│   │   ├── screens/
+│   │   ├── components/
+│   │   ├── services/
+│   │   ├── navigation/
+│   │   └── utils/
+│   │
+│   └── package.json
+│
+├── ARCHITECTURE.md
+└── README.md
+```
+
+---
+
+# 🚀 Getting Started
+
+## Prerequisites
+
+Install the following before running the project:
+
+* **Node.js 18+**
+* **npm**
+* **Python 3.9+**
+* **PostgreSQL 14+**
+* **Expo**
+* **Git**
+
+---
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/sowmika03/sleep-disorder-pattern-detection.git
+cd sleep-disorder-pattern-detection
+```
+
+---
+
+## 2. Database Setup
+
+Create the PostgreSQL database:
+
+```bash
+createdb sleep_disorder_db
+```
+
+Run the database schema:
+
+```bash
 psql -d sleep_disorder_db -f backend/database/schema.sql
 ```
 
-### 2. Backend Setup
+Alternatively, create the database using **pgAdmin** and execute:
+
+```text
+backend/database/schema.sql
+```
+
+---
+
+## 3. Backend Setup
 
 ```bash
 cd backend
 npm install
+```
 
-# Copy and configure environment
-cp .env.example .env
-# Edit .env with your database credentials
+Create a `.env` file using `.env.example`:
 
-# Start server
+```env
+PORT=3000
+NODE_ENV=development
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=sleep_disorder_db
+DB_USER=postgres
+DB_PASSWORD=your_password
+
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=7d
+
+ML_SERVICE_URL=http://localhost:5000
+CORS_ORIGIN=http://localhost:19006
+```
+
+Start the backend:
+
+```bash
 npm start
-# or for development
+```
+
+For development:
+
+```bash
 npm run dev
 ```
 
-Backend will run on `http://localhost:3000`
+Backend:
 
-### 3. ML Service Setup
+```text
+http://localhost:3000
+```
+
+---
+
+## 4. ML Service Setup
+
+Open another terminal:
 
 ```bash
 cd ml-service
+```
 
-# Create virtual environment (recommended)
+Create a virtual environment:
+
+### Windows
+
+```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+venv\Scripts\activate
+```
 
-# Install dependencies
+### macOS/Linux
+
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
-# Generate synthetic dataset
+Generate the development dataset:
+
+```bash
 python src/synthetic_dataset.py
+```
 
-# Train the model
+Train the model:
+
+```bash
 python src/train_model.py
+```
 
-# Start inference service
+Start the ML inference service:
+
+```bash
 python src/inference.py
 ```
 
-ML Service will run on `http://localhost:5000`
+ML service:
 
-### 4. Mobile App Setup
+```text
+http://localhost:5000
+```
+
+---
+
+## 5. Mobile Application Setup
+
+Open another terminal:
 
 ```bash
 cd mobile-app
 npm install
+```
 
-# Configure API URL (optional)
-# Edit src/utils/constants.js or set EXPO_PUBLIC_API_URL environment variable
+Configure the backend API URL in:
 
-# Start Expo
+```text
+src/utils/constants.js
+```
+
+or use the appropriate Expo environment variable:
+
+```text
+EXPO_PUBLIC_API_URL
+```
+
+Start Expo:
+
+```bash
 npx expo start
 ```
 
-Scan QR code with Expo Go app or press `a` for Android / `i` for iOS simulator.
+You can then:
 
-## 📁 Project Structure
+* Scan the QR code using **Expo Go**
+* Press `a` to launch Android
+* Press `i` to launch the iOS simulator
 
-```
-CSE_C_14/
-├── backend/                 # Node.js API
-│   ├── src/
-│   │   ├── controllers/     # Request handlers
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   ├── models/         # Database models
-│   │   ├── middlewares/    # Auth, validation
-│   │   └── utils/          # Helpers
-│   ├── database/           # SQL schema
-│   └── package.json
-│
-├── ml-service/              # Python ML service
-│   ├── src/
-│   │   ├── synthetic_dataset.py  # Dataset generation
-│   │   ├── train_model.py        # Model training
-│   │   ├── inference.py          # Prediction API
-│   │   └── features.py           # Feature engineering
-│   ├── data/               # Generated datasets
-│   ├── models/             # Trained models
-│   └── requirements.txt
-│
-├── mobile-app/             # React Native Expo
-│   ├── src/
-│   │   ├── screens/        # App screens
-│   │   ├── components/     # Reusable components
-│   │   ├── services/       # API clients
-│   │   ├── navigation/     # Navigation setup
-│   │   └── utils/          # Constants, helpers
-│   └── package.json
-│
-└── README.md
-```
+---
 
-## 🔐 Environment Variables
+# 🔐 Environment Variables
 
-### Backend (.env)
+### Backend
 
 ```env
 PORT=3000
@@ -138,103 +488,63 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=sleep_disorder_db
 DB_USER=postgres
-DB_PASSWORD=postgres
-JWT_SECRET=your-super-secret-jwt-key
+DB_PASSWORD=your_password
+JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
 ML_SERVICE_URL=http://localhost:5000
 CORS_ORIGIN=http://localhost:19006
 ```
 
-### Mobile App
+### Mobile Application
 
-Set `EXPO_PUBLIC_API_URL` environment variable or edit `src/utils/constants.js`
+Configure:
 
-## 📡 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-
-### Activity
-- `POST /api/activity/upload` - Upload activity logs
-- `GET /api/activity/history` - Get activity history
-
-### Predictions
-- `POST /api/prediction/run` - Run prediction (requires activities)
-- `GET /api/prediction/latest` - Get latest prediction
-
-### Recommendations
-- `GET /api/recommendations` - Get recommendations
-- `PATCH /api/recommendations/:id/read` - Mark as read
-
-## 🧠 ML Model Training
-
-### Step 1: Generate Dataset
-
-```bash
-cd ml-service
-python src/synthetic_dataset.py
+```text
+EXPO_PUBLIC_API_URL
 ```
 
-This generates `data/synthetic_dataset.csv` with:
-- 300 users
-- 14 days per user
-- Labels: normal, insomnia, dsps
+with the URL of the running backend.
 
-### Step 2: Train Model
+> **Security:** Never commit real passwords, JWT secrets, API keys, or other credentials to GitHub.
 
-```bash
-python src/train_model.py
-```
+---
 
-This will:
-- Load and process the dataset
-- Extract features for each user
-- Train RandomForest classifier
-- Save model to `models/sleep_disorder_model_v1.0.0.pkl`
+# 📡 API Endpoints
 
-### Step 3: Start Inference Service
+## Authentication
 
-```bash
-python src/inference.py
-```
+| Method | Endpoint             | Description         |
+| ------ | -------------------- | ------------------- |
+| POST   | `/api/auth/register` | Register a new user |
+| POST   | `/api/auth/login`    | Authenticate user   |
 
-Model will be loaded automatically on startup.
+## Activity
 
-## 🔄 End-to-End Prediction Flow
+| Method | Endpoint                | Description               |
+| ------ | ----------------------- | ------------------------- |
+| POST   | `/api/activity/upload`  | Upload activity logs      |
+| GET    | `/api/activity/history` | Retrieve activity history |
 
-1. **User uploads activities** via mobile app
-   - Activities stored in PostgreSQL
-   
-2. **User requests prediction**
-   - Backend fetches recent activities (last 7 days)
-   - Backend calls ML service `/predict` endpoint
-   - ML service extracts features and runs model
-   - Returns prediction with probabilities
+## Predictions
 
-3. **Backend saves prediction**
-   - Stores in `predictions` table
-   - Generates recommendations based on prediction
-   - Returns result to mobile app
+| Method | Endpoint                 | Description                |
+| ------ | ------------------------ | -------------------------- |
+| POST   | `/api/prediction/run`    | Generate a prediction      |
+| GET    | `/api/prediction/latest` | Retrieve latest prediction |
 
-4. **Mobile app displays results**
-   - Shows risk meter
-   - Displays sleep timeline estimates
-   - Shows recommendations
+## Recommendations
 
-## 📱 Mobile App Features
+| Method | Endpoint                        | Description                 |
+| ------ | ------------------------------- | --------------------------- |
+| GET    | `/api/recommendations`          | Retrieve recommendations    |
+| PATCH  | `/api/recommendations/:id/read` | Mark recommendation as read |
 
-- **Authentication**: Register/Login with JWT
-- **Dashboard**: Overview with latest prediction
-- **Upload Activity**: Manual upload or sample data generation
-- **Predictions**: View and generate new predictions
-- **History**: Activity and prediction history
-- **Recommendations**: Personalized suggestions
-- **Profile**: User information and logout
+---
 
-## 🧪 Testing the System
+# 🧪 Testing the API
 
-### 1. Register a user
+### Register
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -246,7 +556,8 @@ curl -X POST http://localhost:3000/api/auth/register \
   }'
 ```
 
-### 2. Login
+### Login
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -256,9 +567,10 @@ curl -X POST http://localhost:3000/api/auth/login \
   }'
 ```
 
-Save the token from response.
+Use the returned JWT token for authenticated requests.
 
-### 3. Upload activities
+### Upload Activity
+
 ```bash
 curl -X POST http://localhost:3000/api/activity/upload \
   -H "Content-Type: application/json" \
@@ -276,7 +588,8 @@ curl -X POST http://localhost:3000/api/activity/upload \
   }'
 ```
 
-### 4. Run prediction
+### Run Prediction
+
 ```bash
 curl -X POST http://localhost:3000/api/prediction/run \
   -H "Content-Type: application/json" \
@@ -284,89 +597,223 @@ curl -X POST http://localhost:3000/api/prediction/run \
   -d '{"days": 7}'
 ```
 
-### 5. Get latest prediction
+### Get Latest Prediction
+
 ```bash
 curl -X GET http://localhost:3000/api/prediction/latest \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
-## 🔧 Troubleshooting
+---
 
-### Backend won't start
-- Check PostgreSQL is running
-- Verify database credentials in `.env`
-- Ensure database exists
+# 📱 Application Screenshots
 
-### ML Service errors
-- Make sure model is trained (`train_model.py`)
-- Check model file exists in `ml-service/models/`
-- Verify Python dependencies installed
+Screenshots will be added here to demonstrate the major application workflows.
 
-### Mobile app connection issues
-- Verify backend is running on correct port
-- Check `API_BASE_URL` in `src/utils/constants.js`
-- Ensure CORS is configured correctly
+### Authentication
 
-### Prediction fails
-- Ensure activities are uploaded first
-- Check ML service is running
-- Verify activities span at least 1 day
+*Add login and registration screenshots here.*
 
-## 📊 Database Schema
+### Dashboard
 
-See `backend/database/schema.sql` for complete schema.
+*Add dashboard screenshot here.*
 
-Key tables:
-- `users` - User accounts
-- `activity_logs` - Smartphone activity data
-- `sleep_sessions` - Sleep session records
-- `predictions` - ML predictions
-- `recommendations` - Personalized recommendations
+### Activity Upload
 
-## 🎯 ML Features
+*Add activity upload screenshot here.*
 
-The model uses 24 features including:
-- Temporal: sleep start/end, duration, consistency
-- Late night activity: events 11 PM - 4 AM
-- Screen usage: unlock frequency, session duration
-- App categories: social, entertainment, productivity
-- Charging behavior: frequency, timing
-- Circadian indicators: activity distribution
+### Prediction
 
-## 🚀 Production Deployment
+*Add prediction result screenshot here.*
 
-### Backend
-- Use PM2 or similar process manager
-- Set `NODE_ENV=production`
-- Use strong JWT secret
-- Enable HTTPS
-- Configure proper CORS origins
-- Set up database connection pooling
+### Recommendations
 
-### ML Service
-- Use Gunicorn or uWSGI
-- Run behind reverse proxy (nginx)
-- Enable request timeout
-- Monitor model performance
+*Add recommendation screenshot here.*
 
-### Mobile App
-- Build production bundle
-- Configure production API URL
-- Enable code signing
-- Test on real devices
+Example:
 
-## 📝 License
-
-This is a production-grade system built for educational and research purposes.
-
-## 👥 Support
-
-For issues or questions, please check:
-1. Architecture documentation: `ARCHITECTURE.md`
-2. ML Service README: `ml-service/README.md`
-3. Database schema: `backend/database/schema.sql`
+```markdown
+![Login Screen](screenshots/login.png)
+![Dashboard](screenshots/dashboard.png)
+![Prediction Result](screenshots/prediction.png)
+```
 
 ---
 
-**Built with ❤️ for sleep health awareness**
+# 📈 Results
 
+The machine learning pipeline evaluates the classification model using metrics such as:
+
+* Classification Accuracy
+* Confusion Matrix
+* F1-Score
+* Class-wise prediction performance
+
+The current dataset/model configuration achieved approximately **80.4% classification accuracy**.
+
+The confusion matrix is used to analyze how effectively the model distinguishes between:
+
+* Normal
+* Insomnia
+* DSPS
+
+> Model performance depends on the dataset, feature engineering, training configuration, and data quality.
+
+---
+
+# 🗄️ Database
+
+The application uses PostgreSQL to store application and activity data.
+
+### Main Tables
+
+* `users` — User accounts and authentication information
+* `activity_logs` — Smartphone behavioral activity
+* `sleep_sessions` — Sleep-related session information
+* `predictions` — Machine learning predictions
+* `recommendations` — Generated recommendations
+
+Database schema:
+
+```text
+backend/database/schema.sql
+```
+
+---
+
+# 🔧 Troubleshooting
+
+### Backend does not start
+
+Check:
+
+* PostgreSQL is running
+* Database exists
+* `.env` credentials are correct
+* Port `3000` is available
+
+### ML Service fails
+
+Check:
+
+* Python virtual environment is activated
+* Dependencies are installed
+* Model has been trained
+* Model file exists in `ml-service/models/`
+
+### Mobile application cannot connect
+
+Check:
+
+* Backend is running
+* Correct API URL is configured
+* Mobile device and computer can communicate over the network
+* Firewall/network settings are not blocking the backend
+
+### Prediction fails
+
+Check:
+
+* Activity data has been uploaded
+* ML service is running
+* Required features are available
+* The model has been trained successfully
+
+---
+
+# 🔮 Future Enhancements
+
+* Automatic smartphone usage-data collection
+* Real-time screen-time integration
+* Improved feature engineering
+* Larger and more diverse datasets
+* Model comparison with LSTM/deep-learning approaches
+* Personalized sleep analytics
+* Cloud deployment
+* Automated model monitoring
+* Improved prediction explainability
+
+---
+
+# ⚠️ Limitations
+
+* Smartphone behavioral data cannot replace clinical sleep studies.
+* The system is designed for screening and awareness, not medical diagnosis.
+* Model performance depends on the quality and representativeness of the training data.
+* Automatic smartphone data collection may vary across operating systems and device permissions.
+* Clinical validation would be required before considering real-world medical use.
+
+---
+
+# 📚 Documentation
+
+Additional project documentation:
+
+* [`ARCHITECTURE.md`](ARCHITECTURE.md)
+* [`ml-service/README.md`](ml-service/README.md)
+* [`backend/database/schema.sql`](backend/database/schema.sql)
+
+---
+
+# 🚀 Production Considerations
+
+For a production deployment, the system could be enhanced with:
+
+### Backend
+
+* PM2 or another process manager
+* HTTPS
+* Secure secret management
+* Production CORS configuration
+* Database connection pooling
+* Logging and monitoring
+
+### ML Service
+
+* Gunicorn
+* Reverse proxy
+* Request timeouts
+* Model versioning
+* Performance monitoring
+
+### Mobile Application
+
+* Production API configuration
+* Application signing
+* Production builds
+* Device testing
+* Secure storage for authentication tokens
+
+---
+
+# 🎯 Project Highlights
+
+* Built a complete **end-to-end ML application**
+* Implemented **REST API communication** between application layers
+* Developed a **Python/Flask machine learning service**
+* Integrated a **Random Forest classification model**
+* Designed a **PostgreSQL-backed backend**
+* Implemented **JWT authentication**
+* Developed a **React Native mobile interface**
+* Engineered **24 smartphone behavioral features**
+* Created an architecture connecting mobile, backend, database, and ML services
+
+---
+
+# 👩‍💻 Author
+
+**Sai Jahnavi**
+
+Computer Science and Engineering Graduate
+
+---
+
+## 📄 License
+
+This project was developed for **educational and research purposes**.
+
+---
+
+⭐ If you find this project useful, consider giving the repository a star.
+
+**Built with ❤️ for sleep health awareness and machine learning research.**
