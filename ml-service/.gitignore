@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+ENV/
+*.pkl
+*.csv
+!data/.gitkeep
+!models/.gitkeep
+.DS_Store
+
