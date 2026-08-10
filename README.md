@@ -802,7 +802,7 @@ For a production deployment, the system could be enhanced with:
 
 # 👩‍💻 Author
 
-**Sai Jahnavi**
+**Sowmika**
 
 Computer Science and Engineering Graduate
 
